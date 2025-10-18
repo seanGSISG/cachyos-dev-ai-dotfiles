@@ -4,18 +4,49 @@ A GitHub-ready, reproducible setup for **CachyOS + KDE Plasma (Wayland)** on hig
 
 **Production-ready**: Works on both fresh installs and existing setups. Automatically backs up your configs before applying changes.
 
+## 🤖 Claude Code Integration (NEW!)
+
+This repo now includes a complete **Eric Buess-style Claude Code configuration**:
+
+- ✅ **Global PreCompact Hook** - Auto-generates `CONTEXT_STATE.md` before compacting
+- ✅ **One-Command Setup** - `make all` installs everything globally
+- ✅ **One-Command Project Init** - `claude-init` sets up any project
+- ✅ **Eric Buess Integrations** - `/docs` and `/index` commands included
+- ✅ **CachyOS Optimized** - Arch-specific enhancements
+
+**Quick Start:**
+```bash
+# After installation, initialize Claude Code in any project:
+cd ~/projects/my-app
+claude-init         # One command!
+claude-code
+
+# Use features:
+/review            # Review code
+/index             # Generate project index
+/docs hooks        # Read documentation
+```
+
+📖 **[Read the Complete Claude Code Guide →](CLAUDE_CODE_GUIDE.md)**
+
 ---
 
 ## ✨ Features
 
+- **🤖 Claude Code Integration (Eric Buess-style)**:
+  - Global PreCompact hook (auto-generates CONTEXT_STATE.md)
+  - Custom slash commands (/review, /commit, /analyze, /test, /dotfiles, /index)
+  - One-command project initialization (`claude-init`)
+  - /docs and /index integrations included
+  - CachyOS/Arch-optimized configuration
 - **🎨 Riced KDE Plasma 6** (Wayland): Catppuccin Mocha theme, Bibata cursors, JetBrains Mono Nerd Font, Konsole profile
-- **🐚 Productive shell**: zsh + starship + zoxide + fzf + eza + bat + ripgrep + direnv
-- **🛠️ Modern dev toolchain**: 
+- **🐚 Productive shell**: Enhanced zsh + starship + zoxide + fzf + eza + bat + ripgrep + direnv
+- **🛠️ Modern dev toolchain**:
   - `mise` for runtime management (Python 3.13, Node.js LTS)
   - `uv` for blazing-fast Python venv/package management
   - VS Code Insiders + extensions (including Claude AI)
   - GitHub CLI (`gh`)
-- **🤖 AI/ML stack**: 
+- **🤖 AI/ML stack**:
   - NVIDIA drivers (open-source) + CUDA 13.0
   - PyTorch 2.9.0 with CUDA 13.0 support
   - Docker + NVIDIA Container Toolkit
@@ -54,11 +85,20 @@ make all
 # 3) Reboot to apply all changes
 sudo reboot
 
-# 4) After reboot, verify everything works
+# 4) After reboot, install Claude Code integrations (optional but recommended)
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-project-index/main/install.sh | bash
+
+# 5) Reload shell and verify
+source ~/.zshrc
 make verify
 ```
 
-That's it! The script handles everything automatically, including backing up any existing dotfiles.
+That's it! The script handles everything automatically, including:
+- ✅ System packages and drivers
+- ✅ Dotfiles with automatic backup
+- ✅ **Global Claude Code configuration**
+- ✅ Enhanced Zsh with aliases
 
 ---
 
@@ -99,12 +139,19 @@ That's it! The script handles everything automatically, including backing up any
 
 Files managed by stow:
 - `.gitconfig` - Git configuration with delta integration
-- `.zshrc` - Shell configuration with plugins and aliases
+- `.zshrc` - **Enhanced shell with Claude Code aliases** (c, cc, claude, claude-init)
 - `.config/starship.toml` - Shell prompt configuration
 - `.config/kitty/kitty.conf` - Terminal emulator settings
 - `.config/konsolerc` - Konsole terminal settings
 - `.local/share/konsole/Cachy.profile` - Konsole color scheme
 - `.config/Code - Insiders/User/settings.json` - VS Code settings
+
+### Phase 3.5: Claude Code Global Setup (instant)
+**🎯 NEW: Eric Buess-Style Configuration**
+- Installs PreCompact hook to `~/.claude/scripts/precompact-auto-context.py`
+- Configures `~/.claude/settings.json` with global hooks
+- Now available for **all projects** on the system
+- Auto-generates `CONTEXT_STATE.md` before conversation compacting
 
 ### Phase 4: System Configuration (instant)
 - **Shell**: Sets zsh as default shell (requires logout to take effect)

@@ -270,6 +270,40 @@ else
   echo "    (This is expected if running bootstrap.sh outside the repo)"
 fi
 
+echo "==> Setting up Claude Code global configuration"
+# Create ~/.claude/scripts directory if it doesn't exist
+mkdir -p ~/.claude/scripts
+
+# Copy PreCompact hook script
+if [ -f "dotfiles/claude/scripts/precompact-auto-context.py" ]; then
+  cp dotfiles/claude/scripts/precompact-auto-context.py ~/.claude/scripts/
+  chmod +x ~/.claude/scripts/precompact-auto-context.py
+  echo "  ✓ Installed PreCompact hook to ~/.claude/scripts/"
+else
+  echo "  ⚠ PreCompact script not found in dotfiles"
+fi
+
+# Merge or create global settings.json with PreCompact hook
+if [ -f ~/.claude/settings.json ]; then
+  # Backup existing settings
+  cp ~/.claude/settings.json ~/.claude/settings.json.backup-$(date +%s)
+  echo "  ✓ Backed up existing ~/.claude/settings.json"
+
+  # Check if PreCompact hook already exists
+  if grep -q "PreCompact" ~/.claude/settings.json; then
+    echo "  ✓ PreCompact hook already configured"
+  else
+    echo "  ⚠ Please manually add PreCompact hook to ~/.claude/settings.json"
+    echo "    See: dotfiles/claude/settings.json for example"
+  fi
+else
+  # No existing settings, create from template if available
+  if [ -f "dotfiles/claude/settings.json" ]; then
+    cp dotfiles/claude/settings.json ~/.claude/settings.json
+    echo "  ✓ Created ~/.claude/settings.json with PreCompact hook"
+  fi
+fi
+
 
 cat <<'MSG'
 
