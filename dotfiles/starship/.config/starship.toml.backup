@@ -33,6 +33,14 @@ read_only = " 🔒"
 read_only_style = "red"
 home_symbol = "~"
 
+# Optional: Shorten some common paths for cleaner look
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+"dev" = " "
+".config" = " "
 
 # Username (only shows if different from default)
 [username]
@@ -126,6 +134,29 @@ style = "bold yellow"
 show_milliseconds = false
 show_notifications = false
 
+# CUDA - for CUDA development (useful for your AI work!)
+[cuda]
+symbol = "🎮 "
+format = "via [$symbol($version )]($style)"
+style = "bold green"
+detect_extensions = ["cu", "cuh"]
+detect_files = []
+
+# Battery - shows battery status (useful for laptops)
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡️"
+discharging_symbol = "💀"
+unknown_symbol = "❓"
+empty_symbol = "🪫"
+
+[[battery.display]]
+threshold = 10
+style = "bold red"
+
+[[battery.display]]
+threshold = 30
+style = "bold yellow"
 
 # Memory usage - shows RAM usage
 [memory_usage]
