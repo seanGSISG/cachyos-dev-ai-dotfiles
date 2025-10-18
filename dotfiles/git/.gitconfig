@@ -1,0 +1,10 @@
+[user]
+    name = seanGSISG
+    email = sswanson@gsisg.com
+[core]
+    editor = code-insiders --wait
+    excludesfile = ~/.config/.gitignore_global
+[pull]
+    rebase = false
+[init]
+    defaultBranch = main

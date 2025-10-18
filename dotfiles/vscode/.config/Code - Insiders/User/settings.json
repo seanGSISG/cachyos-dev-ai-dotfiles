@@ -1,0 +1,23 @@
+{
+  "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+  "editor.fontLigatures": true,
+  "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font'",
+  "workbench.colorTheme": "Default Dark Modern",
+  "files.trimTrailingWhitespace": true,
+  "git.confirmSync": false,
+
+  // --- Python / Ruff / uv ---
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  
+  // --- Misc ---
+  "redhat.telemetry.enabled": false
+}
