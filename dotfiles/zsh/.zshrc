@@ -1,3 +1,6 @@
+# === FastFetch ===
+fastfetch
+
 # === Custom Paths ===
 # Add VSCode Insiders
 export PATH="/home/lsdmt/vscode-insiders/bin:$PATH"
