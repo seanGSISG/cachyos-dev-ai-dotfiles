@@ -23,33 +23,31 @@ echo "==> System update"
 if ! need sudo; then echo "Need sudo"; exit 1; fi
 sudo pacman -Syu --noconfirm
 
+echo "==> Removing conflicting legacy NVIDIA driver"
+# This ensures we don't conflict with nvidia-open-dkms
+sudo pacman -Rdd --noconfirm nvidia-dkms || true
+
 echo "==> Base packages (mise + uv workflow)"
 sudo pacman -S --needed --noconfirm \
-  # core dev & QoL
   git base-devel curl wget unzip zip stow \
   zsh starship tmux fzf zoxide fd ripgrep eza bat btop fastfetch direnv \
   jq yq aria2 git-delta \
   cmake ninja clang lld pkgconf \
-  # modern toolchains
   uv \
-  # desktop & utilities
+  mise \
   kitty github-cli \
-  python # System python for uv bootstrap & system tools
-  konsole dolphin ark kdeplasma-addons kde-graphics-spectacle \
+  python \
+  konsole dolphin ark kdeplasma-addons spectacle \
   xdg-desktop-portal-kde qt6-wayland egl-wayland \
-  kvantum kvantum-qt5 kvantum-qt6 \
-  ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols papirus-icon-theme bibata-cursor-theme \
-  # GPU & AI
-  nvidia-dkms nvidia-utils nvidia-settings opencl-nvidia cuda cudnn nccl nvtop \
+  kvantum kvantum-qt5 \
+  ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols papirus-icon-theme \
+  nvidia-open-dkms nvidia-utils nvidia-settings opencl-nvidia cuda cudnn nccl nvtop \
   nvidia-container-toolkit \
   docker docker-buildx docker-compose \
   distrobox \
-  # diagnostics / media / sensors
   nvme-cli lm_sensors vulkan-tools ffmpeg \
-  # shell plugins
   zsh-autosuggestions zsh-syntax-highlighting \
-  # firewall & zram
-  ufw systemd-zram-generator
+  ufw zram-generator
 
 # --- AUR helper (paru) if missing
 if ! need paru; then
@@ -60,17 +58,28 @@ if ! need paru; then
   rm -rf "$tmp"
 fi
 
-echo "==> AUR packages (mise, themes)"
-# mise-bin: The modern, unified toolchain manager (replaces fnm, pyenv, etc.)
+echo "==> AUR packages (themes)"
+# Refresh AUR cache first
+paru -Syy --noconfirm
+# Install themes
 paru -S --needed --noconfirm \
-  mise-bin \
-  catppuccin-kde-git \
-  catppuccin-kvantum-git \
+  catppuccin-plasma-colorscheme-mocha \
+  kvantum-theme-catppuccin-git \
   catppuccin-cursors-mocha \
-  || echo "AUR theme install failed, continuing..."
+  bibata-cursor-theme-bin
+
+echo "==> Configuring fonts"
+# This enables Nerd Font symbols system-wide
+sudo ln -sf /usr/share/fontconfig/conf.avail/10-nerd-font-symbols.conf /etc/fonts/conf.d/10-nerd-font-symbols.conf
+sudo fc-cache -f -v
 
 echo "==> Default shell (zsh)"
+# Add zsh to /etc/shells if it's not there
+if ! grep -q "/usr/bin/zsh" /etc/shells; then
+  echo "/usr/bin/zsh" | sudo tee -a /etc/shells
+fi
 if [ "${SHELL:-}" != "$(command -v zsh)" ]; then
+  # This command might fail non-fatally, which is OK.
   chsh -s "$(command -v zsh)" || true
 fi
 
@@ -78,26 +87,37 @@ echo "==> Setting up 'mise' global toolchains"
 # This installs and sets global default versions for core tools.
 # Projects can override this with a local .tool-versions file.
 if need mise; then
-  mise use -g python@3.12
+  # Use Python 3.13 since PyTorch 2.6+ supports it
+  mise use -g python@3.13
   mise use -g node@lts
   mise use -g ruff@latest
   mise use -g black@latest
   mise use -g pre-commit@latest
+  
+  # === THIS IS THE FIX ===
+  # Now, explicitly and synchronously install them.
+  # This forces the script to WAIT until downloads/installs are complete.
+  echo "==> Forcing synchronous install of mise toolchains (this may take a minute)..."
+  mise install
+  echo "==> Mise install complete."
 else
   echo "WARNING: 'mise' not found, skipping toolchain setup."
 fi
 
 echo "==> Creating default AI venv with 'uv' and PyTorch"
 # Create a dedicated venv for AI work with PyTorch compiled for CUDA
-# This assumes the 'cuda' package from pacman provides CUDA 12.1+
+# Your system has CUDA 13.0, so we use cu130 wheels
 if need uv; then
-  echo "Creating venv at ~/venvs/ai-torch..."
-  uv venv "${HOME}/venvs/ai-torch"
+  echo "Creating venv at ${HOME}/venvs/ai-torch..."
+  # Use system Python 3.13 which PyTorch 2.6+ supports
+  uv venv "${HOME}/venvs/ai-torch" --python python3.13
   
-  echo "Installing PyTorch (for CUDA 12.1+), Jupyter, and linters..."
-  "${HOME}/venvs/ai-torch/bin/uv" pip install \
+  echo "Installing PyTorch (for CUDA 13.0), Jupyter, and linters..."
+  # Updated to use CUDA 13.0 (cu130) which has Python 3.13 support
+  # Use --extra-index-url to keep PyPI as primary source for non-PyTorch packages
+  uv pip install --python "${HOME}/venvs/ai-torch/bin/python" \
     jupyterlab \
-    torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu121 \
+    torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu130 \
     ruff \
     black \
     pre-commit
@@ -165,9 +185,16 @@ if [ ! -f /etc/systemd/zram-generator.conf.d/99-custom.conf ]; then
 zram-size = 48G
 compression-algorithm = zstd
 EOT
-  # Restart to apply
+  # Reload and apply - handle existing zram gracefully
   sudo systemctl daemon-reload
-  sudo systemctl restart systemd-zram-setup@zram0.service || true
+  # Stop existing zram if running
+  sudo systemctl stop systemd-zram-setup@zram0.service 2>/dev/null || true
+  # Reset zram device if it exists
+  if [ -e /dev/zram0 ]; then
+    sudo zramctl --reset /dev/zram0 2>/dev/null || true
+  fi
+  # Start with new config
+  sudo systemctl start systemd-zram-setup@zram0.service || true
 fi
 
 if [ "$ENABLE_VIRT" = "1" ]; then
@@ -188,6 +215,62 @@ if [ "$ENABLE_NEMO_DEFAULT" = "1" ]; then
   fi
 fi
 
+echo "==> Backing up existing dotfiles and configuring with stow"
+# Create backup directory with timestamp
+BACKUP_DIR="${HOME}/dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+
+# List of dotfiles to backup (these might conflict with stow)
+DOTFILES_TO_BACKUP=(
+  ".gitconfig"
+  ".zshrc"
+  ".config/konsolerc"
+  ".config/kitty/kitty.conf"
+  ".config/starship.toml"
+  ".config/Code - Insiders/User/settings.json"
+  ".local/share/konsole/Cachy.profile"
+)
+
+# Backup existing files if they exist and are not symlinks
+backed_up=0
+for file in "${DOTFILES_TO_BACKUP[@]}"; do
+  filepath="${HOME}/${file}"
+  if [ -e "$filepath" ] && [ ! -L "$filepath" ]; then
+    # File exists and is not a symlink - back it up
+    filedir="$(dirname "$file")"
+    mkdir -p "${BACKUP_DIR}/${filedir}"
+    cp -a "$filepath" "${BACKUP_DIR}/${file}"
+    echo "  Backed up: ${file}"
+    backed_up=1
+    # Remove the file so stow can create symlink
+    rm -f "$filepath"
+  fi
+done
+
+if [ $backed_up -eq 1 ]; then
+  echo "  ✓ Original dotfiles backed up to: ${BACKUP_DIR}"
+else
+  # No files were backed up, remove empty backup dir
+  rmdir "$BACKUP_DIR" 2>/dev/null || true
+  echo "  No conflicting dotfiles found - clean install"
+fi
+
+# Now stow the dotfiles (this assumes we're running from the repo root)
+if [ -d "dotfiles" ]; then
+  echo "  Stowing dotfiles..."
+  cd dotfiles
+  for pkg in git zsh starship kitty konsolerc konsole-profile vscode; do
+    if [ -d "$pkg" ]; then
+      stow -d . -t ~ "$pkg" 2>/dev/null && echo "    ✓ $pkg" || echo "    ⚠ $pkg (skipped)"
+    fi
+  done
+  cd ..
+else
+  echo "  ⚠ 'dotfiles' directory not found - skipping stow"
+  echo "    (This is expected if running bootstrap.sh outside the repo)"
+fi
+
+
 cat <<'MSG'
 
 ✅ Bootstrap complete.
@@ -196,7 +279,7 @@ Next steps:
 1) Log out and log back in (or reboot) to apply group/shell changes.
 2. Your shell is now configured via your .zshrc dotfile.
 3. Your default AI venv is ready. To use it:
-   - Activate: source ~/venvs/ai-torch/bin/activate
+   - Activate: source ${HOME}/venvs/ai-torch/bin/activate
    - Test PyTorch: python -c "import torch; print(torch.cuda.is_available())"
 4. In VS Code: Ctrl+Shift+P → “Claude: Sign in”.
 MSG
