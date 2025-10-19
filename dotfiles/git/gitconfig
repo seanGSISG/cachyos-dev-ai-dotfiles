@@ -1,0 +1,16 @@
+[user]
+    name = seanGSISG
+    email = sswanson@gsisg.com
+[core]
+    editor = code-insiders --wait
+    excludesfile = ~/.config/.gitignore_global
+[pull]
+    rebase = false
+[init]
+    defaultBranch = main
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

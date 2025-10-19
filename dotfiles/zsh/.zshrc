@@ -89,10 +89,10 @@ elif command -v yay &>/dev/null; then
 fi
 
 # Claude Code aliases
-alias c='claude-code'
-alias cc='claude-code'
-alias claude='claude-code'
-alias claude-init='~/dev/cachyos-dev-ai-dotfiles/scripts/init-claude-project.sh'
+alias ccd='claude --dangerously-skip-permissions'
+alias cc='claude'
+alias claude='claude'
+alias ccinit='~/dev/cachyos-dev-ai-dotfiles/scripts/init-claude-project.sh'
 
 # Tmux
 alias ta='tmux attach -t'

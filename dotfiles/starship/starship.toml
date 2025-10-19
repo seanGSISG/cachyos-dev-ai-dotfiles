@@ -1,0 +1,182 @@
+add_newline = true
+
+# Main prompt format - organized left to right
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$golang\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Prompt character - changes color based on success/failure
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+# Directory display - FULL PATH, beautifully styled
+[directory]
+truncation_length = 0        # 0 = show full path
+truncate_to_repo = false     # Don't truncate to git repo root
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold cyan"
+read_only = " 🔒"
+read_only_style = "red"
+home_symbol = "~"
+
+
+# Username (only shows if different from default)
+[username]
+show_always = false
+style_user = "bold yellow"
+style_root = "bold red"
+format = "[$user]($style) "
+
+# Hostname (only shows in SSH)
+[hostname]
+ssh_only = true
+format = "on [$hostname](bold red) "
+
+# Git branch - with cool icon
+[git_branch]
+symbol = " "
+format = "on [$symbol$branch(:$remote_branch)]($style) "
+style = "bold purple"
+truncation_length = 50
+truncation_symbol = "…"
+
+# Git status - detailed with custom symbols
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold red"
+conflicted = "⚔️ "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "🤷${count} "
+stashed = "📦${count} "
+modified = "📝${count} "
+staged = "✓${count} "
+renamed = "👅${count} "
+deleted = "🗑️${count} "
+
+# Git state (merge, rebase, etc)
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+# Python - shows version and virtualenv with icon
+[python]
+symbol = "🐍 "
+format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+style = "yellow"
+pyenv_version_name = true
+detect_extensions = ["py"]
+detect_files = [".python-version", "Pipfile", "pyproject.toml", "requirements.txt", "setup.py", "tox.ini"]
+detect_folders = [".venv", "venv", "env"]
+
+# Node.js - with icon
+[nodejs]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+style = "bold green"
+detect_extensions = ["js", "mjs", "cjs", "ts"]
+detect_files = ["package.json", ".node-version", ".nvmrc"]
+
+# Rust - for Rust projects
+[rust]
+symbol = "🦀 "
+format = "via [$symbol($version )]($style)"
+style = "bold red"
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
+
+# Go - for Go projects
+[golang]
+symbol = "🐹 "
+format = "via [$symbol($version )]($style)"
+style = "bold cyan"
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum"]
+
+# Docker context - when using Docker
+[docker_context]
+symbol = "🐳 "
+format = "via [$symbol$context]($style) "
+style = "blue bold"
+only_with_files = true
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+detect_extensions = []
+detect_folders = []
+
+# Command duration - shows how long commands took
+[cmd_duration]
+min_time = 500  # Show duration for commands that take > 500ms
+format = "took [$duration]($style) "
+style = "bold yellow"
+show_milliseconds = false
+show_notifications = false
+
+
+# Memory usage - shows RAM usage
+[memory_usage]
+disabled = false
+threshold = 75
+format = "via $symbol[${ram_pct}]($style) "
+symbol = "🐏 "
+style = "bold dimmed white"
+
+# Time - optional, shows current time
+[time]
+disabled = true  # Set to false if you want to show time
+format = '🕙[\[ $time \]]($style) '
+time_format = "%T"
+style = "bold white"
+
+# Jobs - shows background jobs count
+[jobs]
+symbol = "✦"
+format = "[$symbol$number]($style) "
+style = "bold blue"
+number_threshold = 1
+symbol_threshold = 1
+
+# Line break before prompt character
+[line_break]
+disabled = false
+
+# Package version - shows version from package files
+[package]
+symbol = "📦 "
+format = "is [$symbol$version]($style) "
+style = "208 bold"
+display_private = false
+disabled = false
+
+# Nix shell indicator
+[nix_shell]
+symbol = "❄️ "
+format = 'via [$symbol$state( \($name\))]($style) '
+style = "bold blue"
+impure_msg = "impure"
+pure_msg = "pure"
+
+# Status - shows exit code on failure
+[status]
+disabled = false
+format = '[\[$symbol$status\]]($style) '
+symbol = "✖"
+style = "bold red"
+not_found_symbol = "🔍"
+not_executable_symbol = "🚫"
+sigint_symbol = "🧱"
+signal_symbol = "⚡"

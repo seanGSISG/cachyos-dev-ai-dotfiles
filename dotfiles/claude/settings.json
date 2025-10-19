@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "hooks": {
     "PreCompact": [
       {
@@ -19,8 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude-code-docs/claude-docs-helper.sh hook-check",
-            "description": "Auto-suggest /docs for documentation queries"
+            "command": "~/.claude-code-docs/claude-docs-helper.sh hook-check"
           }
         ]
       }
@@ -31,7 +29,6 @@
           {
             "type": "command",
             "command": "/home/lsdmt/.claude-code-project-index/scripts/run_python.sh /home/lsdmt/.claude-code-project-index/scripts/i_flag_hook.py",
-            "description": "Project index -i flag support",
             "timeout": 20
           }
         ]
@@ -39,11 +36,11 @@
     ],
     "Stop": [
       {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
             "command": "/home/lsdmt/.claude-code-project-index/scripts/run_python.sh /home/lsdmt/.claude-code-project-index/scripts/stop_hook.py",
-            "description": "Project index cleanup on stop",
             "timeout": 10
           }
         ]

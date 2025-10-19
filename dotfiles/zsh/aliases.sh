@@ -12,8 +12,8 @@ alias sync-pull='~/dev/cachyos-dev-ai-dotfiles/sync.sh pull'
 alias sync-status='~/dev/cachyos-dev-ai-dotfiles/sync.sh status'
 
 # Claude Code shortcuts
-alias claude='claude-code'
-alias c='claude-code'
+alias c='claude'
+alias ccd='claude --dangerously-skip-permissions'
 
 # Git shortcuts for dotfiles repo
 alias dotgit='git -C ~/dev/cachyos-dev-ai-dotfiles'
