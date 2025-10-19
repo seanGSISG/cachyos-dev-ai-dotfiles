@@ -143,6 +143,22 @@ else
   echo "Please ensure /home/lsdmt/vscode-insiders/bin is on your PATH."
 fi
 
+echo "==> Claude Code CLI"
+# Install Claude Code if not already installed
+if ! command -v claude >/dev/null 2>&1 && ! command -v claude-code >/dev/null 2>&1; then
+  echo "Installing Claude Code..."
+  curl -fsSL https://claude.ai/install.sh | bash
+  echo "  ✓ Claude Code installed"
+else
+  echo "  ✓ Claude Code already installed"
+fi
+
+# Create claude-code symlink for compatibility (installer creates 'claude' binary)
+if [ -f "${HOME}/.local/bin/claude" ] && [ ! -f "${HOME}/.local/bin/claude-code" ]; then
+  ln -sf "${HOME}/.local/bin/claude" "${HOME}/.local/bin/claude-code"
+  echo "  ✓ Created claude-code symlink for compatibility"
+fi
+
 echo "==> Docker + NVIDIA runtime"
 sudo nvidia-ctk runtime configure --runtime=docker || true
 sudo systemctl enable --now docker
@@ -261,10 +277,25 @@ if [ -d "dotfiles" ]; then
   cd dotfiles
   for pkg in git zsh starship kitty konsolerc konsole-profile vscode; do
     if [ -d "$pkg" ]; then
-      stow -d . -t ~ "$pkg" 2>/dev/null && echo "    ✓ $pkg" || echo "    ⚠ $pkg (skipped)"
+      echo "    Stowing $pkg..."
+      if stow -d . -t ~ "$pkg" 2>&1; then
+        echo "    ✓ $pkg stowed successfully"
+      else
+        echo "    ⚠ $pkg failed to stow (may already exist or have conflicts)"
+      fi
+    else
+      echo "    ⚠ $pkg directory not found, skipping"
     fi
   done
   cd ..
+
+  # Verify critical dotfiles are symlinked
+  echo "  Verifying critical symlinks..."
+  if [ -L ~/.zshrc ]; then
+    echo "    ✓ ~/.zshrc is symlinked"
+  else
+    echo "    ⚠ ~/.zshrc is NOT a symlink - you may need to run 'source ~/.zshrc' manually"
+  fi
 else
   echo "  ⚠ 'dotfiles' directory not found - skipping stow"
   echo "    (This is expected if running bootstrap.sh outside the repo)"
@@ -311,9 +342,14 @@ cat <<'MSG'
 
 Next steps:
 1) Log out and log back in (or reboot) to apply group/shell changes.
-2. Your shell is now configured via your .zshrc dotfile.
-3. Your default AI venv is ready. To use it:
+2. Your shell is now configured via your .zshrc dotfile (symlinked via stow).
+   - Reload with: source ~/.zshrc
+   - Or start a new terminal session
+3. Claude Code CLI is installed. To use it:
+   - First time: claude-code (follow login prompts)
+   - Or use aliases: c, cc, or claude
+4. Your default AI venv is ready. To use it:
    - Activate: source ${HOME}/venvs/ai-torch/bin/activate
    - Test PyTorch: python -c "import torch; print(torch.cuda.is_available())"
-4. In VS Code: Ctrl+Shift+P → “Claude: Sign in”.
+5. In VS Code: Ctrl+Shift+P → "Claude: Sign in".
 MSG

@@ -213,6 +213,11 @@ if command -v fzf &>/dev/null; then
     source <(fzf --zsh)
 fi
 
+# Mise (runtime version manager) - if installed
+if command -v mise &>/dev/null; then
+    eval "$(mise activate zsh)"
+fi
+
 # ============================================================================
 # PROJECT-SPECIFIC CONFIGURATIONS
 # ============================================================================

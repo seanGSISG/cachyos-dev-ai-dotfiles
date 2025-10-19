@@ -19,13 +19,15 @@ This repo now includes a complete **Eric Buess-style Claude Code configuration**
 # After installation, initialize Claude Code in any project:
 cd ~/projects/my-app
 claude-init         # One command!
-claude-code
+c                   # Launch Claude Code (or: claude, claude-code)
 
 # Use features:
 /review            # Review code
 /index             # Generate project index
 /docs hooks        # Read documentation
 ```
+
+> **Note**: The installer creates the binary as `claude`, but our scripts automatically create a `claude-code` symlink for compatibility. You can use any of these commands: `c`, `cc`, `claude`, or `claude-code`.
 
 📖 **[Read the Complete Claude Code Guide →](CLAUDE_CODE_GUIDE.md)**
 
@@ -488,6 +490,28 @@ rm -rf ~/dotfiles-backup-*
 # Or use the Makefile (keeps 3 most recent)
 make clean-backup
 ```
+
+### Claude Code Command Not Found
+If you get `command not found: claude-code` after installation:
+
+```bash
+# 1. Check if Claude is installed
+ls -la ~/.local/bin/claude
+
+# 2. Add ~/.local/bin to PATH if needed
+export PATH="$HOME/.local/bin:$PATH"
+
+# 3. Create the symlink manually if missing
+ln -sf ~/.local/bin/claude ~/.local/bin/claude-code
+
+# 4. Reload your shell
+source ~/.zshrc
+
+# 5. Test it
+c  # Should work now
+```
+
+The official installer creates the binary as `claude`, but our dotfiles use `claude-code` for consistency. The bootstrap and apply-dotfiles scripts automatically create this symlink.
 
 ---
 
