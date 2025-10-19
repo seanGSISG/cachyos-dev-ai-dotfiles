@@ -47,7 +47,8 @@ sudo pacman -S --needed --noconfirm \
   distrobox \
   nvme-cli lm_sensors vulkan-tools ffmpeg \
   zsh-autosuggestions zsh-syntax-highlighting \
-  ufw zram-generator
+  ufw zram-generator \
+  devtools
 
 # --- AUR helper (paru) if missing
 if ! need paru; then
@@ -275,7 +276,7 @@ fi
 if [ -d "dotfiles" ]; then
   echo "  Stowing dotfiles..."
   cd dotfiles
-  for pkg in git zsh starship kitty konsolerc konsole-profile vscode; do
+  for pkg in git zsh starship kitty konsolerc konsole-profile vscode ripgrep tmux bat micro; do
     if [ -d "$pkg" ]; then
       echo "    Stowing $pkg..."
       if stow -d . -t ~ "$pkg" 2>&1; then

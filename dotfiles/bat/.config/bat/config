@@ -1,0 +1,71 @@
+# Bat (better cat) Configuration
+# https://github.com/sharkdp/bat
+
+# ============================================================================
+# THEME
+# ============================================================================
+
+# Use Catppuccin Mocha theme (matches your KDE Plasma theme)
+# Available themes: bat --list-themes
+--theme="Catppuccin-mocha"
+
+# If Catppuccin is not installed, fall back to these:
+# --theme="TwoDark"
+# --theme="Monokai Extended"
+
+# ============================================================================
+# DISPLAY OPTIONS
+# ============================================================================
+
+# Show line numbers
+--style="numbers,changes,header,grid"
+
+# Enable this to show only line numbers and changes (cleaner):
+# --style="numbers,changes"
+
+# Wrap text if it's too long
+--wrap=auto
+
+# Show non-printable characters
+# --show-all
+
+# ============================================================================
+# PAGING
+# ============================================================================
+
+# Use 'less' as pager when output is longer than screen
+--paging=auto
+
+# Never use paging (always print to stdout):
+# --paging=never
+
+# ============================================================================
+# LANGUAGE/SYNTAX MAPPINGS
+# ============================================================================
+
+# Map file extensions to specific languages
+--map-syntax="*.conf:INI"
+--map-syntax=".ignore:Git Ignore"
+--map-syntax="*.zshrc:Bourne Again Shell (bash)"
+--map-syntax="*.zsh:Bourne Again Shell (bash)"
+--map-syntax=".env*:dotenv"
+
+# Treat .config files as YAML
+--map-syntax="*.config:YAML"
+
+# ============================================================================
+# TAB WIDTH
+# ============================================================================
+
+# Set tab width to 4 spaces
+--tabs=4
+
+# ============================================================================
+# ADDITIONAL OPTIONS
+# ============================================================================
+
+# Highlight matching lines when using bat with grep
+# --italic-text=always
+
+# Uncomment to disable automatic pager:
+# --pager=never

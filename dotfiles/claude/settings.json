@@ -41,7 +41,14 @@
           {
             "type": "command",
             "command": "/home/lsdmt/.claude-code-project-index/scripts/run_python.sh /home/lsdmt/.claude-code-project-index/scripts/stop_hook.py",
-            "timeout": 10
+            "timeout": 10,
+            "description": "Update PROJECT_INDEX.json if it exists"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/scripts/update-continue-work.py",
+            "timeout": 10,
+            "description": "Update CONTINUE_WORK.md with session context"
           }
         ]
       }

@@ -1,0 +1,7 @@
+# Alternative ripgrep config file name
+# Same as .rgrc - some people prefer this name
+# Symlink this or use .rgrc (both work)
+
+# This file intentionally left minimal - use .rgrc as the main config
+# Include this line to load the main config if using this filename:
+# See .rgrc for full configuration

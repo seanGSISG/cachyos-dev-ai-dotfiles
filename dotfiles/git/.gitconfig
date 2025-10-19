@@ -4,6 +4,7 @@
 [core]
     editor = code-insiders --wait
     excludesfile = ~/.config/.gitignore_global
+	pager = delta
 [pull]
     rebase = false
 [init]
@@ -14,3 +15,8 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true

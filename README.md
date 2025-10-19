@@ -42,7 +42,24 @@ c                   # Launch Claude Code (or: claude, claude-code)
   - /docs and /index integrations included
   - CachyOS/Arch-optimized configuration
 - **🎨 Riced KDE Plasma 6** (Wayland): Catppuccin Mocha theme, Bibata cursors, JetBrains Mono Nerd Font, Konsole profile
-- **🐚 Productive shell**: Enhanced zsh + starship + zoxide + fzf + eza + bat + ripgrep + direnv
+- **🐚 Modern CLI Tools** (50+ aliases):
+  - **bat** - Syntax-highlighted cat with git integration
+  - **eza** - Better ls with colors, icons, git status
+  - **fd** - Fast find that respects .gitignore
+  - **ripgrep** - Lightning-fast code search
+  - **micro** - Mouse-friendly terminal editor (replaces vim)
+  - **tmux** - Terminal multiplexer with mouse support
+  - Colored man pages, fzf keybindings, smart integrations
+- **🐳 Docker Optimized** (25+ aliases):
+  - Fast container management (dps, dex, dlogs)
+  - Docker Compose shortcuts (dcu, dcd, dcl)
+  - GPU support (dgpu) + cleanup tools (dprune)
+  - Distrobox integration included
+- **🔧 Extended Git Workflow** (20+ aliases):
+  - Quick commits (gaa, gcm, gcam)
+  - Stash management (gst, gstp)
+  - One-command undo (gundo)
+  - All common operations covered
 - **🛠️ Modern dev toolchain**:
   - `mise` for runtime management (Python 3.13, Node.js LTS)
   - `uv` for blazing-fast Python venv/package management
@@ -288,9 +305,19 @@ cachyos-dev-ai-dotfiles/
 │
 ├── dotfiles/                    # Managed by GNU Stow
 │   ├── git/
-│   │   └── .gitconfig          # Git configuration
-│   ├── zsh/
-│   │   └── .zshrc              # Zsh configuration
+│   │   └── .gitconfig          # Git configuration with delta
+│   ├── zsh/                    # Enhanced shell (50+ aliases)
+│   │   ├── .zshrc              # Main config + integrations
+│   │   ├── aliases.sh          # Modern CLI, Docker, Git aliases
+│   │   └── helpers.sh          # Help functions (ah, rg-help, etc.)
+│   ├── tmux/
+│   │   └── .tmux.conf          # Mouse support, vi-mode, Catppuccin
+│   ├── bat/
+│   │   └── .config/bat/config  # Syntax highlighting config
+│   ├── ripgrep/
+│   │   └── .rgrc               # Ripgrep defaults
+│   ├── micro/
+│   │   └── .config/micro/settings.json  # Mouse-friendly editor
 │   ├── starship/
 │   │   └── .config/starship.toml
 │   ├── kitty/
@@ -309,6 +336,246 @@ cachyos-dev-ai-dotfiles/
 
 ---
 
+## 🚀 Modern CLI Tools Reference
+
+This setup replaces standard Unix tools with modern, feature-rich alternatives.
+
+### Bat (Better Cat)
+
+Syntax-highlighted file viewing with git integration:
+
+```bash
+# View files with syntax highlighting
+cat README.md              # Automatically uses bat
+bat script.py              # Explicit bat usage
+
+# Variants
+bn file.txt                # Plain output (no line numbers)
+bp large.log               # Force paging
+
+# Colored man pages (automatic!)
+man ls                     # Now beautifully colored
+```
+
+**Features**: Syntax highlighting for 200+ languages, git diff integration, line numbers, automatic paging
+
+### Eza (Better Ls)
+
+Beautiful file listings with git status and icons:
+
+```bash
+# Basic usage
+ls                         # Directories first
+ll                         # Long format with git status
+la                         # Show hidden files
+
+# Tree views
+lt                         # Tree (2 levels)
+lt3                        # Tree (3 levels)
+lta                        # Tree with hidden files
+
+# Git integration
+lg                         # Show git status per file
+lm                         # Sort by modified time
+```
+
+**Features**: Git status, icons, colors, tree view, smart sorting
+
+### Fd (Better Find)
+
+Fast file finding that respects .gitignore:
+
+```bash
+# Find files (respects .gitignore)
+find script.py             # Uses fd, ignores .git/
+fd test                    # Find all files matching 'test'
+
+# Variants
+fda pattern                # Find all (including hidden/ignored)
+fdd                        # Find directories only
+fdf                        # Find files only
+fde py                     # Find by extension (.py files)
+```
+
+**Features**: 5-10x faster than `find`, respects .gitignore, smart defaults
+
+### Ripgrep (Better Grep)
+
+Lightning-fast code search:
+
+```bash
+# Search current directory
+rg 'TODO'                  # Find TODOs
+rgi 'function'             # Case-insensitive
+
+# Search specific types
+rgpy 'import'              # Python files only
+rgjs 'const'               # JavaScript only
+rgsh 'alias'               # Shell scripts only
+
+# Context and output
+rg3 'error'                # 3 lines of context
+rgl 'API_KEY'              # Only show filenames
+rgc 'function'             # Count matches per file
+
+# Get help
+rg-help                    # Full cheatsheet with examples
+```
+
+**Features**: 10-100x faster than grep, smart defaults, powerful regex
+
+### Micro (Better Vim)
+
+Mouse-friendly terminal editor with standard keybindings:
+
+```bash
+# Edit files
+micro file.txt             # Full mouse support!
+edit config.yaml           # Alias
+e script.py                # Short alias
+
+# Standard shortcuts work!
+Ctrl+S                     # Save
+Ctrl+Q                     # Quit
+Ctrl+F                     # Find
+Ctrl+C/V                   # Copy/paste
+Ctrl+Z/Y                   # Undo/redo
+
+# Get help
+micro-help                 # Full keybinding reference
+```
+
+**Features**: Full mouse support, no learning curve, syntax highlighting, multi-cursor
+
+### Tmux (Terminal Multiplexer)
+
+Enhanced terminal multiplexing with mouse support:
+
+```bash
+# Start monitoring session
+sysmon                     # btop + nvtop side-by-side
+sysmon-kill                # Kill monitoring session
+
+# Standard tmux
+tmux                       # Start new session
+ta session-name            # Attach to session
+tl                         # List sessions
+
+# Mouse support enabled!
+# Click to switch panes
+# Drag borders to resize
+# Scroll with mouse wheel
+```
+
+**Features**: Mouse support, vi-mode copy/paste, Catppuccin theme, better keybindings
+
+### FZF Keybindings
+
+Fuzzy finder integrated throughout:
+
+```bash
+# Press these anywhere in terminal:
+Ctrl+R                     # Fuzzy search command history
+Ctrl+T                     # Fuzzy find files
+Alt+C                      # Fuzzy change directory
+```
+
+**Features**: Respects .gitignore, fast search, works with fd
+
+### Helper Functions
+
+Quick reference commands:
+
+```bash
+ah                         # View all aliases (alias-help)
+rg-help                    # Ripgrep examples
+docker-help                # Docker shortcuts
+micro-help                 # Micro editor guide
+sysinfo                    # System information
+helpers                    # List all helpers
+```
+
+---
+
+## 🐳 Docker Quick Reference
+
+Fast container management with 25+ shortcuts:
+
+```bash
+# Containers
+dps                        # List running containers
+dpsa                       # List all containers
+dex container_id bash      # Execute bash in container
+dsh container_id bash      # Same as dex
+
+# Logs
+dlogs container_id         # View logs
+dlogsf container_id        # Follow logs
+dlogst container_id        # Tail last 100 + follow
+
+# Docker Compose
+dc                         # docker compose
+dcu                        # compose up
+dcud                       # compose up detached
+dcd                        # compose down
+dcl                        # compose logs (follow)
+dcr                        # compose restart
+
+# Cleanup
+dprune                     # Clean up everything
+dprune-volumes             # Including volumes
+dclean-containers          # Remove all containers
+dclean-images              # Remove all images
+
+# GPU
+dgpu image_name            # Run with GPU support
+
+# Get help
+docker-help                # Full Docker shortcuts reference
+```
+
+---
+
+## 🔧 Extended Git Workflow
+
+20+ aliases for faster Git operations:
+
+```bash
+# Quick commits
+gaa                        # git add --all
+gcm "message"              # git commit -m
+gcam "message"             # git commit -am (add + commit)
+
+# Pulling/Fetching
+gpl                        # git pull
+gf                         # git fetch
+gfa                        # git fetch --all
+
+# Branching
+gb                         # git branch
+gba                        # git branch -a (all branches)
+gbd branch                 # git branch -d (delete)
+gco branch                 # git checkout
+
+# Stashing
+gst                        # git stash
+gstp                       # git stash pop
+gstl                       # git stash list
+gsta                       # git stash apply
+
+# Advanced
+grb                        # git rebase
+grbi                       # git rebase -i
+gcl url                    # git clone
+gundo                      # Undo last commit (soft reset)
+gclean                     # git clean -fd
+
+# View all
+ah                         # See all git aliases in organized view
+```
+
+---
+
 ## 🔍 AI Stack Quick Reference
 
 ### NVIDIA / CUDA
@@ -320,7 +587,7 @@ nvidia-smi
 nvcc --version
 
 # Monitor GPU usage
-nvtop
+nvtop                      # Or use: sysmon (btop + nvtop)
 ```
 
 ### Docker with GPU

@@ -1,0 +1,58 @@
+# Ripgrep configuration file
+# This file is read by ripgrep when RIPGREP_CONFIG_PATH is set
+
+# ============================================================================
+# DISPLAY OPTIONS
+# ============================================================================
+
+# Always show line numbers
+--line-number
+
+# Show column numbers
+--column
+
+# Use smart case (case-insensitive unless pattern has uppercase)
+--smart-case
+
+# Follow symbolic links
+--follow
+
+# Show hidden files (but still respect .gitignore)
+# Uncomment if you want to search hidden files by default:
+# --hidden
+
+# Maximum number of columns to show (prevents super long lines)
+--max-columns=150
+
+# Preview before/after context lines (can override with -A, -B, -C)
+# --context=2
+
+# ============================================================================
+# SEARCH BEHAVIOR
+# ============================================================================
+
+# Sort results by file path
+# --sort=path
+
+# Use glob patterns (allows *.py style patterns)
+--glob-case-insensitive
+
+# ============================================================================
+# FILE TYPE CUSTOMIZATION
+# ============================================================================
+
+# Add custom file types (use: rg --type=custom-name)
+--type-add=web:*.{html,css,js,jsx,ts,tsx,vue}
+--type-add=config:*.{json,yaml,yml,toml,ini,conf}
+--type-add=doc:*.{md,txt,rst}
+--type-add=script:*.{sh,bash,zsh,fish}
+
+# ============================================================================
+# PERFORMANCE
+# ============================================================================
+
+# Use multiple threads (default is already optimal, but explicit here)
+# --threads=4
+
+# Memory map files for better performance
+--mmap

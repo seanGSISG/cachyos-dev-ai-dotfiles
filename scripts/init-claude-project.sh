@@ -95,40 +95,78 @@ for doc in QUICK_COMMANDS.md RECOVERY_INSTRUCTIONS.md; do
     fi
 done
 
-# Create CONTINUE_WORK.md template if it doesn't exist
-if [ ! -f "CONTINUE_WORK.md" ]; then
-    cat > CONTINUE_WORK.md << 'EOF'
-# Work in Progress
+# Create CONTINUE_WORK.md template in .claude/ directory
+if [ ! -f ".claude/CONTINUE_WORK.md" ]; then
+    cat > .claude/CONTINUE_WORK.md << 'EOF'
+# Continue Work
 
-**Last Updated**: $(date)
+**Last Updated**: Auto-updated by Stop hook
+**Manual Updates**: Add your tasks and notes below
 
 ## Current Task
 
+_Describe what you're currently working on..._
 
 ## Completed
-- [ ]
+
+- [ ] Example completed task
+- [ ] Another completed task
 
 ## Next Steps
-- [ ]
+
+- [ ] Next task to work on
+- [ ] Another upcoming task
+
+## Session Context
+
+_This section is auto-updated when Claude Code stops_
 
 ## Notes
 
+_Add any important notes, reminders, or context here..._
+
+### Useful Commands
+
+```bash
+# Resume work
+claude-code  # or: c, cc, claude
+
+# Check project state
+cat .claude/CONTEXT_STATE.md
+
+# Review changes
+git status
+git diff
+
+# Update project index
+/index
+```
+
+---
+*File is auto-updated by Stop hook. Manual edits in sections above are preserved.*
 EOF
-    echo -e "${GREEN}   ✓ Created CONTINUE_WORK.md template${NC}"
+    echo -e "${GREEN}   ✓ Created .claude/CONTINUE_WORK.md template${NC}"
 fi
 
-# Add .claude to .gitignore if not already there
+# Add .claude/CONTEXT_STATE.md to .gitignore if not already there
 if [ -f ".gitignore" ]; then
-    if ! grep -q "^CONTEXT_STATE.md$" .gitignore; then
+    if ! grep -q "^.claude/CONTEXT_STATE.md$" .gitignore; then
         echo "" >> .gitignore
         echo "# Claude Code auto-generated files" >> .gitignore
-        echo "CONTEXT_STATE.md" >> .gitignore
-        echo -e "${GREEN}   ✓ Added CONTEXT_STATE.md to .gitignore${NC}"
+        echo ".claude/CONTEXT_STATE.md" >> .gitignore
+        echo -e "${GREEN}   ✓ Added .claude/CONTEXT_STATE.md to .gitignore${NC}"
+    fi
+    # Also add legacy CONTEXT_STATE.md in root for backward compatibility
+    if ! grep -q "^CONTEXT_STATE.md$" .gitignore; then
+        echo "CONTEXT_STATE.md  # Legacy location (use .claude/ instead)" >> .gitignore
     fi
 else
     cat > .gitignore << 'EOF'
 # Claude Code auto-generated files
-CONTEXT_STATE.md
+.claude/CONTEXT_STATE.md
+CONTEXT_STATE.md  # Legacy location (use .claude/ instead)
+
+# Note: .claude/CONTINUE_WORK.md is tracked for team collaboration
 EOF
     echo -e "${GREEN}   ✓ Created .gitignore${NC}"
 fi

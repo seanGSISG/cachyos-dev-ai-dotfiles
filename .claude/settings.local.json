@@ -9,7 +9,10 @@
       "Write",
       "Edit",
       "Glob",
-      "Grep"
+      "Grep",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__MetaMCP-Research__tavily__tavily-search",
+      "mcp__MetaMCP-Research__tavily__tavily-extract"
     ],
     "deny": [],
     "ask": []
