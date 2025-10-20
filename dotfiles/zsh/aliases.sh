@@ -42,9 +42,7 @@ alias dotlog='dotgit log --oneline --graph --decorate'
 # CLAUDE CODE SHORTCUTS
 # ============================================================================
 
-alias c='claude'
 alias cc='claude'
-alias claude='claude'
 alias ccd='claude --dangerously-skip-permissions'
 alias ccinit='~/dev/cachyos-dev-ai-dotfiles/scripts/init-claude-project.sh'
 alias claude-init='ccinit'
