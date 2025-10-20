@@ -101,6 +101,15 @@ if need mise; then
   echo "==> Forcing synchronous install of mise toolchains (this may take a minute)..."
   mise install
   echo "==> Mise install complete."
+
+  # Install ccline (Claude Code status line) via npm
+  echo "==> Installing ccline (Claude Code status line)..."
+  if command -v npm >/dev/null 2>&1; then
+    npm install -g @cometix/ccline
+    echo "==> ccline installed successfully"
+  else
+    echo "WARNING: npm not found, skipping ccline installation"
+  fi
 else
   echo "WARNING: 'mise' not found, skipping toolchain setup."
 fi
@@ -276,7 +285,7 @@ fi
 if [ -d "dotfiles" ]; then
   echo "  Stowing dotfiles..."
   cd dotfiles
-  for pkg in git zsh starship kitty konsolerc konsole-profile vscode ripgrep tmux bat micro; do
+  for pkg in git zsh starship kitty konsolerc konsole-profile vscode ripgrep tmux bat micro paru claude; do
     if [ -d "$pkg" ]; then
       echo "    Stowing $pkg..."
       if stow -d . -t ~ "$pkg" 2>&1; then
@@ -302,39 +311,27 @@ else
   echo "    (This is expected if running bootstrap.sh outside the repo)"
 fi
 
-echo "==> Setting up Claude Code global configuration"
-# Create ~/.claude/scripts directory if it doesn't exist
-mkdir -p ~/.claude/scripts
-
-# Copy PreCompact hook script
-if [ -f "dotfiles/claude/scripts/precompact-auto-context.py" ]; then
-  cp dotfiles/claude/scripts/precompact-auto-context.py ~/.claude/scripts/
-  chmod +x ~/.claude/scripts/precompact-auto-context.py
-  echo "  ✓ Installed PreCompact hook to ~/.claude/scripts/"
+echo "==> Claude Code global configuration"
+# Stow has already deployed ~/.claude/ with settings.json, scripts/, and agents/
+# Just verify and set permissions
+if [ -L ~/.claude/settings.json ]; then
+  echo "  ✓ ~/.claude/settings.json deployed via stow"
+  # Make scripts executable
+  chmod +x ~/.claude/scripts/*.py 2>/dev/null || true
+  echo "  ✓ Hook scripts marked executable"
 else
-  echo "  ⚠ PreCompact script not found in dotfiles"
+  echo "  ⚠ ~/.claude/settings.json not found - stow may have failed"
 fi
 
-# Merge or create global settings.json with PreCompact hook
-if [ -f ~/.claude/settings.json ]; then
-  # Backup existing settings
-  cp ~/.claude/settings.json ~/.claude/settings.json.backup-$(date +%s)
-  echo "  ✓ Backed up existing ~/.claude/settings.json"
+echo "==> Installing Eric Buess Claude Code integrations"
 
-  # Check if PreCompact hook already exists
-  if grep -q "PreCompact" ~/.claude/settings.json; then
-    echo "  ✓ PreCompact hook already configured"
-  else
-    echo "  ⚠ Please manually add PreCompact hook to ~/.claude/settings.json"
-    echo "    See: dotfiles/claude/settings.json for example"
-  fi
-else
-  # No existing settings, create from template if available
-  if [ -f "dotfiles/claude/settings.json" ]; then
-    cp dotfiles/claude/settings.json ~/.claude/settings.json
-    echo "  ✓ Created ~/.claude/settings.json with PreCompact hook"
-  fi
-fi
+# Install claude-code-docs (documentation mirror + /docs command)
+echo "  Installing claude-code-docs..."
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+
+# Install claude-code-project-index (PROJECT_INDEX.json + /index command + -i flag)
+echo "  Installing claude-code-project-index..."
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-project-index/main/install.sh | bash
 
 
 cat <<'MSG'
@@ -346,9 +343,11 @@ Next steps:
 2. Your shell is now configured via your .zshrc dotfile (symlinked via stow).
    - Reload with: source ~/.zshrc
    - Or start a new terminal session
-3. Claude Code CLI is installed. To use it:
+3. Claude Code CLI is installed with Eric Buess integrations:
    - First time: claude-code (follow login prompts)
    - Or use aliases: c, cc, or claude
+   - Available commands: /docs [topic], /index
+   - Use -i flag for index-aware mode (e.g., "fix bug -i")
 4. Your default AI venv is ready. To use it:
    - Activate: source ${HOME}/venvs/ai-torch/bin/activate
    - Test PyTorch: python -c "import torch; print(torch.cuda.is_available())"

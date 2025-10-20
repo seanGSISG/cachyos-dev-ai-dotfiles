@@ -25,8 +25,8 @@ This repository uses a **global + per-project** approach:
 
 **Dotfiles Templates** (`dotfiles/`):
 - Managed by GNU Stow for symlink-based deployment
-- Templates include: git, zsh, starship, kitty, konsole, vscode, tmux, bat, ripgrep, micro, paru configs
-- `dotfiles/claude/` contains templates for global Claude setup and hooks
+- Templates include: git, zsh, starship, kitty, konsole, vscode, tmux, bat, ripgrep, micro, paru, ccline configs
+- `dotfiles/claude/` contains templates for global Claude setup, hooks, and ccline
 - `dotfiles/paru/` contains paru configuration with chroot builds enabled
 - **50+ aliases** for modern CLI tools, Docker, and Git workflows
 
@@ -59,11 +59,7 @@ This repository uses a **global + per-project** approach:
 make all                    # Runs bootstrap + rice-kde
 sudo reboot                 # Apply system changes
 
-# After reboot - Install Claude integrations
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-project-index/main/install.sh | bash
-
-# Reload shell
+# After reboot - Reload shell to enable Claude Code
 source ~/.zshrc
 ```
 
@@ -191,6 +187,13 @@ paru --gendb
 
 ### Claude Code Integration
 
+**CCometixLine Status Bar**:
+- Custom status line showing: model, directory, git, context window, usage, session time
+- Installed via: `npm install -g @cometix/ccline`
+- Config: `~/.claude/ccline/config.toml`
+- Custom theme: `~/.claude/ccline/themes/my-theme.toml` (Nerd Font mode)
+- Repository: https://github.com/Haleclipse/CCometixLine
+
 **Global Hook** (runs for all projects):
 - `~/.claude/scripts/precompact-auto-context.py`
 - Auto-generates `CONTEXT_STATE.md` before conversation compacting
@@ -260,7 +263,22 @@ cachyos-dev-ai-dotfiles/
 │   ├── konsole-profile/.local/share/konsole/Cachy.profile
 │   └── vscode/.config/Code - Insiders/User/settings.json
 │
-└── [CLAUDE_CODE_GUIDE.md, QUICK_COMMANDS.md, README.md]
+├── docs/                         # Documentation
+│   ├── setup/                    # Setup and implementation guides
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── PARU_CHROOT_SETUP.md
+│   │   └── CCLINE_INTEGRATION.md
+│   └── user/                     # End-user documentation
+│       ├── CLAUDE_CODE_GUIDE.md
+│       ├── QUICK_COMMANDS.md
+│       └── RECOVERY_INSTRUCTIONS.md
+│
+├── templates/                    # Template files
+│   └── claude/                   # Claude Code templates
+│       ├── QUICK_COMMANDS.md
+│       └── RECOVERY_INSTRUCTIONS.md
+│
+└── [CLAUDE.md, README.md]        # Main docs (root)
 ```
 
 ## Important Notes
@@ -286,6 +304,49 @@ cachyos-dev-ai-dotfiles/
 - **RAM**: zram configured for 48GB (optimized for 96GB systems)
 
 ## Reference
+
+### CCometixLine (Status Bar)
+
+**Overview**: Custom status bar for Claude Code showing real-time session metrics.
+
+**Segments Enabled**:
+- **Model** 🤖 - Current Claude model (Opus, Sonnet, etc.)
+- **Directory** 📁 - Current working directory
+- **Git** 🌿 - Branch name and status
+- **Context Window** ⚡ - Token usage percentage
+- **Usage** 📊 - API usage tracking with cache
+- **Session** ⏱️ - Session duration timer
+
+**Configuration**:
+```bash
+# Config location
+~/.claude/ccline/config.toml
+
+# Custom theme location
+~/.claude/ccline/themes/my-theme.toml
+
+# Available themes (installed by npm)
+# - cometix, default, gruvbox, minimal, nord
+# - powerline-dark, powerline-light
+# - powerline-rose-pine, powerline-tokyo-night
+```
+
+**Customization**:
+- Edit `config.toml` to change theme or segments
+- Edit `my-theme.toml` to customize colors/icons
+- Supports both plain text and Nerd Font icons
+- Mode: `nerd_font` (requires Nerd Font terminal font)
+
+**Settings Integration**:
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/ccline/ccline",
+    "padding": 0
+  }
+}
+```
 
 ### Modern CLI Tools
 
@@ -365,3 +426,32 @@ Use these for quick reference:
 ## Project Index
 
 Use `@PROJECT_INDEX.json` to reference the auto-generated project structure. Update with `/index` command.
+
+## Documentation Reference
+
+### End-User Documentation
+Located in `docs/user/`:
+- **CLAUDE_CODE_GUIDE.md** - Complete Claude Code usage guide
+- **QUICK_COMMANDS.md** - Quick reference for aliases and commands
+- **RECOVERY_INSTRUCTIONS.md** - Session recovery procedures
+
+### Setup Documentation
+Located in `docs/setup/` (for maintainers):
+- **IMPLEMENTATION_SUMMARY.md** - Context management implementation
+- **PARU_CHROOT_SETUP.md** - Paru chroot configuration
+- **CCLINE_INTEGRATION.md** - Status bar integration
+
+### Templates
+Located in `templates/claude/`:
+- Files copied by `claude-init` to new projects
+- Maintained separately from documentation
+
+**Quick Access**:
+```bash
+# View user guides
+cat docs/user/QUICK_COMMANDS.md
+cat docs/user/CLAUDE_CODE_GUIDE.md
+
+# View setup guides
+cat docs/setup/IMPLEMENTATION_SUMMARY.md
+```

@@ -17,7 +17,7 @@
 set -e
 
 DOTFILES_DIR="${HOME}/dev/cachyos-dev-ai-dotfiles"
-TEMPLATE_DIR="${DOTFILES_DIR}/.claude"
+TEMPLATE_DIR="${DOTFILES_DIR}/templates/claude/.claude"
 TARGET_DIR="$(pwd)/.claude"
 
 # Colors for output
@@ -86,14 +86,20 @@ fi
 # Create session-data directory (optional)
 mkdir -p session-data/{cache,machines}
 
-# Copy documentation files if they don't exist
-echo -e "${BLUE}📄 Setting up documentation...${NC}"
-for doc in QUICK_COMMANDS.md RECOVERY_INSTRUCTIONS.md; do
-    if [ -f "${DOTFILES_DIR}/${doc}" ] && [ ! -f "${doc}" ]; then
-        cp "${DOTFILES_DIR}/${doc}" .
-        echo -e "${GREEN}   ✓ Created ${doc}${NC}"
-    fi
-done
+# Copy documentation and configuration files if they don't exist
+echo -e "${BLUE}📄 Setting up project files...${NC}"
+
+# Copy CLAUDE.md template (brief recovery instructions)
+if [ -f "${DOTFILES_DIR}/templates/claude/CLAUDE.md" ] && [ ! -f "CLAUDE.md" ]; then
+    cp "${DOTFILES_DIR}/templates/claude/CLAUDE.md" .
+    echo -e "${GREEN}   ✓ Created CLAUDE.md (recovery workflow)${NC}"
+fi
+
+# Copy QUICK_COMMANDS.md reference
+if [ -f "${DOTFILES_DIR}/templates/claude/QUICK_COMMANDS.md" ] && [ ! -f "QUICK_COMMANDS.md" ]; then
+    cp "${DOTFILES_DIR}/templates/claude/QUICK_COMMANDS.md" .
+    echo -e "${GREEN}   ✓ Created QUICK_COMMANDS.md${NC}"
+fi
 
 # Create CONTINUE_WORK.md template in .claude/ directory
 if [ ! -f ".claude/CONTINUE_WORK.md" ]; then
@@ -185,9 +191,8 @@ echo -e "   ${GREEN}/review${NC}       - Review current code changes"
 echo -e "   ${GREEN}/commit${NC}       - Create smart git commits"
 echo -e "   ${GREEN}/analyze${NC}      - Analyze codebase structure"
 echo -e "   ${GREEN}/test${NC}         - Run tests"
-echo -e "   ${GREEN}/dotfiles${NC}     - Analyze dotfiles (CachyOS)"
-echo -e "   ${GREEN}/index${NC}        - Generate PROJECT_INDEX.json"
 echo -e "   ${GREEN}/docs [topic]${NC} - Access documentation"
+echo -e "   ${GREEN}/index${NC}        - Generate PROJECT_INDEX.json (global)"
 echo ""
 echo -e "${BLUE}⚙️  Global Configuration:${NC}"
 echo -e "   ${GREEN}✓${NC} PreCompact hook → Configured in ~/.claude/settings.json"
@@ -200,11 +205,12 @@ echo -e "   2. Try: ${GREEN}/index${NC} to create project index"
 echo -e "   3. Try: ${GREEN}/analyze${NC} to understand codebase"
 echo ""
 echo -e "${BLUE}📖 Documentation:${NC}"
+echo -e "   ${GREEN}cat CLAUDE.md${NC}               - Recovery workflow"
 echo -e "   ${GREEN}cat .claude/README.md${NC}       - Configuration guide"
 echo -e "   ${GREEN}cat QUICK_COMMANDS.md${NC}       - Quick reference"
-echo -e "   ${GREEN}cat RECOVERY_INSTRUCTIONS.md${NC} - Recovery procedures"
 echo ""
 echo -e "${YELLOW}💡 Tip:${NC} PreCompact hook works globally for all projects!"
 echo -e "   When Claude Code compacts conversation history, CONTEXT_STATE.md"
-echo -e "   will be auto-generated in your project directory."
+echo -e "   will be auto-generated in .claude/ directory. CLAUDE.md tells Claude"
+echo -e "   to read it automatically after compacting to resume work."
 echo ""

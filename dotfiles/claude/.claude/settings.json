@@ -6,7 +6,6 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/scripts/precompact-auto-context.py",
-            "description": "Auto-generate CONTEXT_STATE.md before compact",
             "timeout": 10
           }
         ]
@@ -41,17 +40,25 @@
           {
             "type": "command",
             "command": "/home/lsdmt/.claude-code-project-index/scripts/run_python.sh /home/lsdmt/.claude-code-project-index/scripts/stop_hook.py",
-            "timeout": 10,
-            "description": "Update PROJECT_INDEX.json if it exists"
+            "timeout": 10
           },
           {
             "type": "command",
             "command": "python3 ~/.claude/scripts/update-continue-work.py",
-            "timeout": 10,
-            "description": "Update CONTINUE_WORK.md with session context"
+            "timeout": 10
           }
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/ccline/ccline",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "api-scaffolding@claude-code-workflows": true,
+    "python-development@claude-code-workflows": true
+  },
+  "alwaysThinkingEnabled": false
 }

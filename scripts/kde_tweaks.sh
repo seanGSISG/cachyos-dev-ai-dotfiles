@@ -31,7 +31,15 @@ fi
 
 # Reload KWin & Plasma configs
 echo "Reloading Plasma shell and KWin..."
-qdbus org.kde.KWin /KWin reconfigure || true
-qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.reloadConfig || true
+# Use qdbus6 for KDE Plasma 6, fallback to qdbus for older versions
+if command -v qdbus6 &> /dev/null; then
+    qdbus6 org.kde.KWin /KWin reconfigure || true
+    qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.reloadConfig || true
+elif command -v qdbus &> /dev/null; then
+    qdbus org.kde.KWin /KWin reconfigure || true
+    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.reloadConfig || true
+else
+    echo "Note: qdbus/qdbus6 not found, skipping Plasma reload (settings will apply on next login)"
+fi
 
 echo "✅ KDE tweaks applied. You may need to log out/in for some settings."
