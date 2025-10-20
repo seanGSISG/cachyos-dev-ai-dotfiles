@@ -72,12 +72,10 @@ alias-help() {
     echo ""
 
     echo -e "${HEADER}🤖 CLAUDE CODE${RESET}"
-    echo -e "  ${ALIAS}c${RESET}               ${DESC}Launch Claude Code${RESET}"
     echo -e "  ${ALIAS}cc${RESET}              ${DESC}Launch Claude Code${RESET}"
-    echo -e "  ${ALIAS}claude${RESET}          ${DESC}Launch Claude Code${RESET}"
     echo -e "  ${ALIAS}ccd${RESET}             ${DESC}Claude (skip permissions)${RESET}"
-    echo -e "  ${ALIAS}ccinit${RESET}          ${DESC}Initialize Claude in project${RESET}"
-    echo -e "  ${ALIAS}claude-init${RESET}     ${DESC}Initialize Claude in project${RESET}"
+    echo -e "  ${ALIAS}claude${RESET}          ${DESC}Launch Claude Code${RESET}"
+
     echo ""
 
     echo -e "${HEADER}📊 SYSTEM MONITORING${RESET}"
